@@ -1,0 +1,43 @@
+﻿@model List<ToDoList.Models.TaskItem>
+@{
+    ViewData["Title"] = "ToDo List";
+}
+
+<h1 style="text-align: center;">ToDo List</h1>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <p class="error-message">@TempData["ErrorMessage"]</p>
+}
+
+<form method="post" action="/Task/Add">
+    <input type="text" name="taskName" class="task-input" placeholder="Enter task" required />
+    <input type="date" name="taskDate" class="task-input" />
+    <button type="submit" class="btn-add">Add Task</button>
+</form>
+
+<ul>
+    @foreach (var item in Model)
+    {
+        <li class="task-item">
+            @if (item.IsBeingEdited)
+            {
+                <form method="post" action="/Task/SaveEdit">
+                    <input type="hidden" name="id" value="@item.Id" />
+                    <input type="text" name="taskName" value="@item.TaskName" class="task-input" />
+                    <button type="submit" class="btn-complete">Save</button>
+                </form>
+            }
+            else
+            {
+                <span class="task-name @(item.IsCompleted ? "completed" : "")">@item.TaskName</span>
+                <span>@item.TaskDate?.ToString("yyyy-MM-dd")</span>
+                <div class="task-buttons">
+                    <button class="btn-complete" onclick="window.location='/Task/Complete/@item.Id'">Complete</button>
+                    <button class="btn-edit" onclick="window.location='/Task/Edit/@item.Id'">Edit</button>
+                    <button class="btn-delete" onclick="window.location='/Task/Delete/@item.Id'">Delete</button>
+                </div>
+            }
+        </li>
+    }
+</ul>
